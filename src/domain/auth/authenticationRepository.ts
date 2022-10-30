@@ -1,10 +1,18 @@
 import { JwtPayload } from 'jsonwebtoken';
 import { Token } from '../token/model';
-import { User } from '../users/model';
+import { Admin } from './model';
 
 export interface IAuthenticationRepository {
   comparePassword(password: string, dbPassword: string): Promise<boolean>;
   hashPassword(password: string): Promise<string>;
-  createUserToken(user: User): Promise<Token>;
-  verifyToken(token: string, secret: string): Promise<JwtPayload>
+  createAdminToken(admin: Admin): Promise<Token>;
+  verifyToken(token: string, secret: string): Promise<JwtPayload>;
+  registerAdmin(admin: IRegisterAdminDto) : Promise<Admin>;
+  getAdminByEmail(email: string): Promise<Admin>;
+}
+
+export interface IRegisterAdminDto {
+  fullname: string,
+  email: string,
+  password: string,
 }

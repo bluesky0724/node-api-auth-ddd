@@ -2,8 +2,8 @@ import express, { Response, Router } from 'express';
 import { IServices } from '../../../../common/interfaces/IServices';
 import {
   validateLoginBodyParams,
-  validateCreateUserBody,
   validate,
+  validateRegisterAdminBody,
 } from '../../middleware/endpointValidator';
 import { asyncWrapper } from '../../utils/asyncWrapper';
 import { IExpressRequest } from '../../../../common/interfaces/IExpressRequest';
@@ -19,18 +19,16 @@ export const authRouter: IAuthRouter = {
   init(services: IServices) {
     router.post(
       '/register',
-      validateCreateUserBody(),
+      validateRegisterAdminBody(),
       validate,
       asyncWrapper(async (req: IExpressRequest, res: Response) => {
-        const user = await services.authService.register({
-          name: req.body.name,
-          surname: req.body.surname,
-          username: req.body.username,
+        const admin = await services.authService.register({
+          fullname: req.body.fullname,
           email: req.body.email,
           password: req.body.password,
         });
         return res.send({
-          data: user.toUserResponse(),
+          data: admin.toAdminResponse(),
         });
       }),
     );
@@ -42,10 +40,7 @@ export const authRouter: IAuthRouter = {
       asyncWrapper(async (req: IExpressRequest, res: Response) => {
         const result = await services.authService.login(req.body.email, req.body.password);
         return res.send({
-          data: {
-            token: result.token,
-            user: result.user.toUserResponse(),
-          },
+          data: result,
         });
       }),
     );

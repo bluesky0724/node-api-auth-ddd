@@ -82,6 +82,45 @@ const requireValidUserBody = () => {
   ];
 };
 
+const requireValidAdminBody = () => {
+  let passwordErrorMsg: string | null;
+  return [
+    body('email')
+      .exists()
+      .isEmail()
+      .withMessage({
+        message: 'email not provided. Make sure you have a "email" property in your body params.',
+        status: 400,
+      }),
+    body('fullname')
+      .exists()
+      .withMessage({
+        message: 'fullname not provided. Make sure you have a "fullname" property in your body params.',
+        status: 400,
+      }),
+    body('password')
+      .exists()
+      .withMessage({
+        message: 'password not provided. Make sure you have a "password" property in your body params.',
+        status: 400,
+      })
+      .custom((value) => {
+        const passwordChecking = passwordComplexity(PASSWORD_COMPLEXITY, 'Password').validate(value);
+        passwordErrorMsg = passwordChecking && passwordChecking.error && passwordChecking.error.details && Array.isArray(passwordChecking.error.details)
+          ? passwordChecking.error.details[0].message
+          : null;
+        if (passwordErrorMsg) {
+          return false;
+        }
+        return true;
+      })
+      .withMessage(() => ({
+        message: passwordErrorMsg,
+        status: 400,
+      })),
+  ];
+};
+
 const requireBodyParamsForLogin = () => [
   body('email')
     .exists()
@@ -148,6 +187,8 @@ const validate = (req: IExpressRequest, res: Response, next: NextFunction): Resp
 
 const validateCreateUserBody = () => requireValidUserBody();
 
+const validateRegisterAdminBody = () => requireValidAdminBody();
+
 const validateUserToken = () => requireSameUser();
 
 const validateLoginBodyParams = () => requireBodyParamsForLogin();
@@ -163,4 +204,5 @@ export {
   validatePostId,
   validateCreatePostBody,
   validate,
+  validateRegisterAdminBody,
 };

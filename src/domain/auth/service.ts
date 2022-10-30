@@ -4,7 +4,7 @@
 // by the implementation of the repositories. It just calls the needed repositories
 
 import { RateLimiterRes } from 'rate-limiter-flexible';
-import { ICreateUser, IGetUserQuery } from '../users/usersRepository';
+import { IGetUserQuery } from '../users/usersRepository';
 import errors from '../../common/errors';
 import {
   getRetryAfterSeconds,
@@ -12,10 +12,12 @@ import {
 import { User } from '../users/model';
 import { IRepositories } from '../../common/interfaces/IRepositories';
 import { Token } from '../token/model';
+import { IRegisterAdminDto } from './authenticationRepository';
+import { Admin } from './model';
 
 export interface IAuthService {
-  register(createUserDto: ICreateUser): Promise<User>
-  login(email: string, password: string): Promise<{ token: Token; user: User; }>
+  register(registerAdminDto: IRegisterAdminDto): Promise<Admin>
+  login(email: string, password: string): Promise<Token>
 }
 
 interface IAuthServiceFactory {
@@ -26,8 +28,8 @@ export const authServiceFactory: IAuthServiceFactory = {
   init(repositories: IRepositories) {
     const getUsernameKey = (username: string) => `${username}`;
 
-    async function register(createUserDto: ICreateUser): Promise<User> {
-      return repositories.usersRepository.createUser(createUserDto);
+    async function register(registerAdminDto: IRegisterAdminDto): Promise<Admin> {
+      return repositories.authenticationRepository.registerAdmin(registerAdminDto);
     }
 
     const handleCorrectLoginPassword = async (resUsername: RateLimiterRes | null, usernameKey: string, user: User): Promise<{
@@ -37,7 +39,7 @@ export const authServiceFactory: IAuthServiceFactory = {
       if (resUsername !== null && resUsername.consumedPoints > 0) {
         await repositories.recourceLimiterRepository.deleteUserKeyForFailedLogin(usernameKey);
       }
-      const token = await repositories.authenticationRepository.createUserToken(user);
+      const token = await repositories.authenticationRepository.createAdminToken(new Admin("","","","", new Date()));
       return {
         token,
         user,
@@ -63,27 +65,18 @@ export const authServiceFactory: IAuthServiceFactory = {
     };
 
     // eslint-disable-next-line consistent-return
-    async function login(email: string, password: string): Promise<{ token: Token; user: User; }> {
-      const usernameKey = getUsernameKey(email);
-      const resUsername = await repositories.recourceLimiterRepository.getUserKeyForFailedLogin(usernameKey);
-      let retrySecs = 0;
-      if (resUsername !== null && resUsername.consumedPoints > repositories.recourceLimiterRepository.maxConsecutiveFailsByUsername) {
-        retrySecs = getRetryAfterSeconds(resUsername.msBeforeNext);
-      }
-      if (retrySecs > 0) {
-        throw new errors.TooManyRequests(`Too Many Requests. Retry after ${String(retrySecs)} seconds`);
-      } else {
-        const user = await repositories.usersRepository.getUser({ email } as IGetUserQuery);
-        const isPasswordCorrect = await repositories.authenticationRepository.comparePassword(password, user.password)
+    async function login(email: string, password: string): Promise<Token> {
+        const admin = await repositories.authenticationRepository.getAdminByEmail(email);
+        const isPasswordCorrect = await repositories.authenticationRepository.comparePassword(password, admin.password)
           .catch((err) => {
             console.error(`Error in authentication of user with email: ${email}`, err);
             return undefined;
           });
         if (!isPasswordCorrect) {
-          return handleWrongLoginPassword(usernameKey, user);
+          throw new errors.Unauthorized('WRONG_PASSWORD');
         }
-        return handleCorrectLoginPassword(resUsername, usernameKey, user);
-      }
+        const token = await repositories.authenticationRepository.createAdminToken(admin);
+        return token;
     }
 
     return {
