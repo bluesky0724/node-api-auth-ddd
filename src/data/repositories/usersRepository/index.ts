@@ -78,7 +78,7 @@ const userStore: IUsersRepository = {
   },
 
   async deleteUser(userId: string): Promise<any> {
-    let result = await UserDao.findOneAndRemove({ id: userId });
+    let result = await UserDao.findByIdAndRemove(userId);
     if (!result) throw new errors.NotFound('User not found.');
     return {
       status: 'Success',
