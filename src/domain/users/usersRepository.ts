@@ -1,12 +1,13 @@
+import { IPagination } from '../../common/interfaces/IPagination';
 import { User } from './model';
 
 export interface IGetUserQuery {
   email?: string,
-  userId?: string
+  userId?: string;
 }
 
 export interface IUpdateUserQuery {
-  userId?: string
+  userId?: string;
 }
 
 export interface ICreateUser {
@@ -26,4 +27,10 @@ export interface IUsersRepository {
   createUser(createUserDto: ICreateUser): Promise<User>;
   updateUser(query: IUpdateUserQuery, updateUserDto: IUpdateUser): Promise<User>;
   deleteUser(userId: string): Promise<any>;
+  getAllUsers(pageNum: number): Promise<IPaginatedUsers>;
+}
+
+export interface IPaginatedUsers {
+  pagination: IPagination;
+  data: User[];
 }

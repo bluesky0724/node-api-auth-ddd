@@ -11,10 +11,12 @@ import { authRouter } from './routes/auth/routes';
 import { usersRouter } from './routes/users/routes';
 import { errorHandler } from './routes/errors/routes';
 import { IServices } from '../../common/interfaces/IServices';
+import swaggerUi from 'swagger-ui-express';
 import config from '../../configuration';
 import * as jose from 'jose';
 import configuration from '../../configuration';
 import fs from 'fs';
+import swaggerDocument from '../../swagger';
 const { jwtSecret } = config;
 const compress = compression();
 const app = express();
@@ -31,17 +33,19 @@ app.use(cors());
 
 export const appServerFactory = {
   init(services: IServices): http.Server {
-    
+
     app.use(express.static(path.join(__dirname, 'public')));
-    
-      app.use(jwt({
-        secret: privateKey,
-        algorithms: ['RS512'],
-      }).unless({
-        path: ['/auth/register', '/auth/login'],
-      }));
-    
-    app.use('/auth', authRouter.init(services));
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+      explorer: true,
+    }));
+    app.use(jwt({
+      secret: privateKey,
+      algorithms: ['RS512'],
+    }).unless({
+      path: ['/admin/register', '/admin/login'],
+    }));
+
+    app.use('/admin', authRouter.init(services));
     app.use('/users', usersRouter.init(services));
     app.use(errorHandler);
     return http.createServer(app);

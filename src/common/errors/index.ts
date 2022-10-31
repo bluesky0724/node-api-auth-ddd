@@ -7,7 +7,6 @@ const isCustomError = (error: any): boolean => {
   return false;
 };
 
-// eslint-disable-next-line prefer-object-spread
 export default Object.assign(
   {},
   throwHttpErrors,

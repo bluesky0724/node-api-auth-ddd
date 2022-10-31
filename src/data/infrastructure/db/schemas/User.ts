@@ -1,7 +1,13 @@
 import moment from 'moment';
 import bcrypt from 'bcryptjs';
 import uniqueValidator from 'mongoose-unique-validator';
-import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
+import mongoose, {
+  PaginateModel,
+  Document,
+  model,
+  Schema,
+} from 'mongoose';
 import { User } from '../../../../domain/users/model';
 
 import cipher from '../../../../common/utils/aes-cipher';
@@ -40,6 +46,8 @@ export const UserSchema = new mongoose.Schema({
 UserSchema.index({ name: 1 });
 
 UserSchema.index({ name: 1, created: -1 });
+
+UserSchema.plugin(mongoosePaginate);
 
 UserSchema.plugin(uniqueValidator);
 
@@ -86,5 +94,6 @@ UserSchema.pre('save', function (next) {
   });
 });
 
+interface IUserDao<T extends Document> extends PaginateModel<T> { }
 
-export const UserDao = mongoose.model<IUserEntity>('User', UserSchema);
+export const UserDao: IUserDao<IUserEntity> = mongoose.model<IUserEntity>('User', UserSchema) as IUserDao<IUserEntity>;

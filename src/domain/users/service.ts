@@ -1,6 +1,6 @@
 import { IRepositories } from '../../common/interfaces/IRepositories';
 import { User } from './model';
-import { ICreateUser, IGetUserQuery, IUpdateUser, IUpdateUserQuery } from './usersRepository';
+import { ICreateUser, IGetUserQuery, IPaginatedUsers, IUpdateUser, IUpdateUserQuery } from './usersRepository';
 
 /*
   Here is the core of our application. Here we add our business logic.
@@ -11,10 +11,11 @@ export type GetUserQuery = IGetUserQuery;
 export type UpdateUserQuery = IUpdateUserQuery;
 
 export interface IUsersService {
-  getUser(query: GetUserQuery): Promise<{ user: User }>
-  createUser(createUserDto: ICreateUser): Promise<User>
-  updateUser(query: UpdateUserQuery, updateUserDto: IUpdateUser): Promise<User>
-  deleteUser(userId: string): Promise<any>
+  getAllUsers(pageNum: number): Promise<IPaginatedUsers>;
+  getUser(query: GetUserQuery): Promise<{ user: User; }>;
+  createUser(createUserDto: ICreateUser): Promise<User>;
+  updateUser(query: UpdateUserQuery, updateUserDto: IUpdateUser): Promise<User>;
+  deleteUser(userId: string): Promise<any>;
 }
 
 interface IUsersServiceFactory {
@@ -23,6 +24,11 @@ interface IUsersServiceFactory {
 
 export const usersServiceFactory: IUsersServiceFactory = {
   init(repositories: IRepositories) {
+
+    async function getAllUsers(pageNum: number): Promise<IPaginatedUsers> {
+      return repositories.usersRepository.getAllUsers(pageNum);
+    }
+
     async function getUser(query: GetUserQuery): Promise<{
       user: User;
     }> {
@@ -52,7 +58,8 @@ export const usersServiceFactory: IUsersServiceFactory = {
       getUser,
       createUser,
       updateUser,
-      deleteUser
+      deleteUser,
+      getAllUsers
     };
   },
 };

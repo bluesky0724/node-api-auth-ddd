@@ -18,6 +18,17 @@ interface IUsersRouter {
 export const usersRouter: IUsersRouter = {
   init(services: IServices) {
     router.get(
+      '/all',
+      validate,
+      asyncWrapper(async (req: IExpressRequest, res: Response) => {
+        const result = await services.usersService.getAllUsers(req.body.pageNum);
+        return res.send({
+          data: result,
+        });
+      }),
+    );
+
+    router.get(
       '/:userId',
       validate,
       asyncWrapper(async (req: IExpressRequest, res: Response) => {
@@ -31,6 +42,8 @@ export const usersRouter: IUsersRouter = {
         });
       }),
     );
+
+
 
     router.post(
       '/',
