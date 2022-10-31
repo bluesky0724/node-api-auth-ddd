@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { Token } from '../../../domain/token/model';
 import errors from '../../../common/errors';
@@ -8,8 +8,13 @@ import { AdminDao } from '../../infrastructure/db/schemas/Admin';
 import logging from '../../../common/logging';
 import configuration from '../../../configuration';
 import { USER_ROLE, USER_TOKEN_EXPIRATION } from '../../../common/constants';
+import * as jose from 'jose';
+import { createSecretKey } from 'crypto';
+import fs from 'fs';
 
 const SALT_ROUNDS = 10;
+
+const privateKey = fs.readFileSync('src/configuration/private.pem', 'utf-8');
 
 interface IAuthenticationRepositoryFactory {
   init(): IAuthenticationRepository;
@@ -34,38 +39,21 @@ export const authenticationRepositoryFactory: IAuthenticationRepositoryFactory =
       return bcrypt.hash(password, salt);
     }
 
-    // async function createAdminToken(user: User): Promise<Token> {
-    //   logging.info('Create consultant token called');
-    //   const jwtSecret = config.jwtSecret as string;
-    //   const token = {
-    //     accessToken: jwt.sign({
-    //       email: user.email,
-    //       fullName: user.fullName,
-    //       _id: user.id,
-    //       roles: [USER_ROLE],
-    //     }, jwtSecret, {
-    //       expiresIn: USER_TOKEN_EXPIRATION,
-    //     }),
-    //     tokenType: 'Bearer',
-    //     roles: [USER_ROLE],
-    //     expiresIn: USER_TOKEN_EXPIRATION,
-    //   };
-    //   return new Token(token.accessToken, token.tokenType, token.expiresIn, token.roles);
-    // }
-
     async function registerAdmin(registerAdminDto: IRegisterAdminDto): Promise<Admin> {
+      let oldAdmin = await AdminDao.findOne({});
+      if (oldAdmin) new errors.Conlict("Admin already exists");
       let adminModel = new AdminDao(registerAdminDto);
       adminModel = await adminModel.save();
       return adminModel.toAdmin();
     }
 
     async function createAdminToken(admin: Admin): Promise<Token> {
-         logging.info('Create consultant token called');
-      const jwtSecret = configuration.jwtSecret as string;
+      logging.info('Create consultant token called');
       const token = {
         accessToken: jwt.sign({
           _id: admin.id,
-        }, jwtSecret, {
+        }, privateKey, {
+          algorithm: 'RS512',
           expiresIn: USER_TOKEN_EXPIRATION,
         }),
         tokenType: 'Bearer',
@@ -79,9 +67,15 @@ export const authenticationRepositoryFactory: IAuthenticationRepositoryFactory =
       return jwt.verify(token, secret);
     }
 
-    async function getAdminByEmail(email: string) : Promise<Admin> {
-      let admin = await AdminDao.findOne({email});
-      if(!admin) throw new errors.NotFound('Admin not found.');
+    async function getAdminByEmail(email: string): Promise<Admin> {
+      let admin = await AdminDao.findOne({ email });
+      if (!admin) throw new errors.NotFound('Admin not found.');
+      return admin.toAdmin();
+    }
+
+    async function getAdminInfo(): Promise<Admin> {
+      let admin = await AdminDao.findOne({});
+      if (!admin) throw new errors.NotFound('Admin not found.');
       return admin.toAdmin();
     }
 
@@ -91,7 +85,8 @@ export const authenticationRepositoryFactory: IAuthenticationRepositoryFactory =
       hashPassword,
       registerAdmin,
       createAdminToken,
-      getAdminByEmail
+      getAdminByEmail,
+      getAdminInfo
     };
   },
 };

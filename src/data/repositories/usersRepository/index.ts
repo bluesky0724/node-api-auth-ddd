@@ -2,7 +2,7 @@ import { FilterQuery } from 'mongoose';
 import errors from '../../../common/errors';
 import { UserDao } from '../../infrastructure/db/schemas/User';
 import { User } from '../../../domain/users/model';
-import { IUsersRepository, IGetUserQuery, ICreateUser } from '../../../domain/users/usersRepository';
+import { IUsersRepository, IGetUserQuery, ICreateUser, IUpdateUserQuery, IUpdateUser } from '../../../domain/users/usersRepository';
 
 interface IUsersRepositoryFactory {
   init(): IUsersRepository;
@@ -33,6 +33,18 @@ const userStore: IUsersRepository = {
     userModel = await userModel.save();
     return userModel.toUser();
   },
+  async updateUser(query:IUpdateUserQuery, updateUserDto: IUpdateUser): Promise<User> {
+    let newUser = await UserDao.findOneAndUpdate(query, updateUserDto);
+    if (!newUser) {
+      throw new errors.NotFound('User not found.');
+    }
+    return newUser.toUser();
+  },
+
+  async deleteUser(userId: string): Promise<any> {
+    let result = await UserDao.findOneAndRemove({id:userId});
+    return result;
+  }
 };
 
 export const usersRepositoryFactory: IUsersRepositoryFactory = {

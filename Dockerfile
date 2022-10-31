@@ -23,7 +23,7 @@ WORKDIR /home/$user/src
 
 COPY --from=builder /build ./
 
-EXPOSE 5555
+EXPOSE 8080
 
 ENV NODE_ENV production
 

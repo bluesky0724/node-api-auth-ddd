@@ -4,9 +4,12 @@ import uniqueValidator from 'mongoose-unique-validator';
 import mongoose from 'mongoose';
 import { User } from '../../../../domain/users/model';
 
+import cipher from '../../../../common/utils/aes-cipher';
+import configuration from '../../../../configuration';
+
+const aes_cipher = cipher(configuration.AES_SECRET_KEY);
+
 export interface IDocumentUser extends mongoose.Document {
-  name: string;
-  surname: string;
   username: string;
   password: string;
   email: string;
@@ -18,14 +21,6 @@ export interface IUserEntity extends IDocumentUser {
 }
 
 export const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  surname: {
-    type: String,
-    required: true,
-  },
   username: {
     type: String,
     required: true,
@@ -49,8 +44,30 @@ UserSchema.index({ name: 1, created: -1 });
 UserSchema.plugin(uniqueValidator);
 
 UserSchema.methods.toUser = function toUser(): User {
-  return new User(this._id, this.name, this.surname, this.username, this.email, this.password, this.created);
+  return new User(this._id, this.username, this.email, this.password, this.created);
 };
+
+UserSchema.path('email').get(function (email: string) {
+  const dec_obj: { enc: string, iv: { type: string, data: Buffer; }, authTag: { type: string, data: Buffer; }; } = JSON.parse(email);
+  const dec_email = aes_cipher.decrypt(dec_obj.enc, new Buffer(dec_obj.iv.data), new Buffer(dec_obj.authTag.data));
+  return dec_email;
+});
+
+UserSchema.path('username').get(function (username: string) {
+  const dec_obj: { enc: string, iv: { type: string, data: Buffer; }, authTag: { type: string, data: Buffer; }; } = JSON.parse(username);
+  const dec_username = aes_cipher.decrypt(dec_obj.enc, new Buffer(dec_obj.iv.data), new Buffer(dec_obj.authTag.data));
+  return dec_username;
+});
+
+UserSchema.path('email').set(function (email: string) {
+  const enc_email = JSON.stringify(aes_cipher.encrypt(email));
+  return enc_email;
+});
+
+UserSchema.path('username').set(function (username: string) {
+  const enc_username = JSON.stringify(aes_cipher.encrypt(username));
+  return enc_username;
+});
 
 UserSchema.pre('save', function (next) {
   this.created = moment().toJSON();
@@ -68,5 +85,6 @@ UserSchema.pre('save', function (next) {
     });
   });
 });
+
 
 export const UserDao = mongoose.model<IUserEntity>('User', UserSchema);

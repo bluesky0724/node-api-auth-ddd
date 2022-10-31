@@ -10,7 +10,6 @@ const createResponseError = (err: any) => ({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(err: any, req: IExpressRequest, res: Response, next: NextFunction): Response<any, Record<string, any>> {
   if (errors.isCustomError(err)) {
     return res.status(err.status).send(createResponseError(err));

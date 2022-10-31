@@ -41,22 +41,10 @@ const requireValidUserBody = () => {
         message: 'email not provided. Make sure you have a "email" property in your body params.',
         status: 400,
       }),
-    body('name')
-      .exists()
-      .withMessage({
-        message: 'name not provided. Make sure you have a "name" property in your body params.',
-        status: 400,
-      }),
     body('username')
       .exists()
       .withMessage({
         message: 'username not provided. Make sure you have a "username" property in your body params.',
-        status: 400,
-      }),
-    body('surname')
-      .exists()
-      .withMessage({
-        message: 'surname not provided. Make sure you have a "surname" property in your body params.',
         status: 400,
       }),
     body('password')
@@ -137,41 +125,6 @@ const requireBodyParamsForLogin = () => [
     }),
 ];
 
-const requireValidPostId = () => [
-  param('postId')
-    .exists()
-    .withMessage({
-      message: 'Add a valid post id.',
-      status: 400,
-    })
-    .custom((value) => {
-      if (!isMongoObjectID(value)) {
-        return false;
-      }
-      return true;
-    })
-    .withMessage({
-      message: 'Add a valid post id.',
-      status: 400,
-    }),
-];
-
-const requireValidPostBody = () => [
-  body('imageUrl')
-    .exists()
-    .isURL()
-    .withMessage({
-      message: 'imageUrl not provided. Make sure you have a "imageUrl" property in your body params.',
-      status: 400,
-    }),
-  body('publisher')
-    .exists()
-    .withMessage({
-      message: 'publisher not provided. Make sure you have a "publisher" property in your body params.',
-      status: 400,
-    }),
-];
-
 const validate = (req: IExpressRequest, res: Response, next: NextFunction): Response<any, Record<string, any>> | void => {
   const validationErrors = validationResult(req);
   if (validationErrors.isEmpty()) {
@@ -193,16 +146,10 @@ const validateUserToken = () => requireSameUser();
 
 const validateLoginBodyParams = () => requireBodyParamsForLogin();
 
-const validatePostId = () => requireValidPostId();
-
-const validateCreatePostBody = () => requireValidPostBody();
-
 export {
   validateUserToken,
   validateCreateUserBody,
   validateLoginBodyParams,
-  validatePostId,
-  validateCreatePostBody,
   validate,
   validateRegisterAdminBody,
 };

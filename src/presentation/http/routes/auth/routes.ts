@@ -43,6 +43,16 @@ export const authRouter: IAuthRouter = {
           data: result,
         });
       }),
+
+      router.get(
+        '/info',
+        asyncWrapper(async (req: IExpressRequest, res: Response) => {
+          const userDoc = await services.authService.getInfo();
+          return res.send({
+            data: userDoc.toAdminResponse(),
+          });
+        })
+      )
     );
 
     return router;

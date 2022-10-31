@@ -5,9 +5,17 @@ export interface IGetUserQuery {
   userId?: string
 }
 
+export interface IUpdateUserQuery {
+  userId?: string
+}
+
 export interface ICreateUser {
-  name: string,
-  surname: string,
+  username: string,
+  email: string,
+  password: string,
+}
+
+export interface IUpdateUser {
   username: string,
   email: string,
   password: string,
@@ -16,4 +24,6 @@ export interface ICreateUser {
 export interface IUsersRepository {
   getUser(query: IGetUserQuery): Promise<User>;
   createUser(createUserDto: ICreateUser): Promise<User>;
+  updateUser(query: IUpdateUserQuery, updateUserDto: IUpdateUser): Promise<User>;
+  deleteUser(userId: string): Promise<any>;
 }

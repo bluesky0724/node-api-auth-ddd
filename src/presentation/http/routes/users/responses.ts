@@ -6,17 +6,14 @@
 export class UserResponse {
   readonly id: string;
 
-  readonly fullName: string;
-
   readonly username: string;
 
   readonly email: string;
 
   readonly created: Date;
 
-  constructor(_id: string, fullName: string, username: string, email: string, created: Date) {
+  constructor(_id: string, username: string, email: string, created: Date) {
     this.id = _id;
-    this.fullName = fullName;
     this.username = username;
     this.email = email;
     this.created = created;

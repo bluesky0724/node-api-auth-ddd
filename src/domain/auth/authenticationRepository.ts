@@ -9,6 +9,7 @@ export interface IAuthenticationRepository {
   verifyToken(token: string, secret: string): Promise<JwtPayload>;
   registerAdmin(admin: IRegisterAdminDto) : Promise<Admin>;
   getAdminByEmail(email: string): Promise<Admin>;
+  getAdminInfo(): Promise<Admin>
 }
 
 export interface IRegisterAdminDto {

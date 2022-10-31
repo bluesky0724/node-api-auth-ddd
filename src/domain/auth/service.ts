@@ -18,6 +18,7 @@ import { Admin } from './model';
 export interface IAuthService {
   register(registerAdminDto: IRegisterAdminDto): Promise<Admin>
   login(email: string, password: string): Promise<Token>
+  getInfo(): Promise<Admin>
 }
 
 interface IAuthServiceFactory {
@@ -31,38 +32,6 @@ export const authServiceFactory: IAuthServiceFactory = {
     async function register(registerAdminDto: IRegisterAdminDto): Promise<Admin> {
       return repositories.authenticationRepository.registerAdmin(registerAdminDto);
     }
-
-    const handleCorrectLoginPassword = async (resUsername: RateLimiterRes | null, usernameKey: string, user: User): Promise<{
-      token: Token;
-      user: User;
-    }> => {
-      if (resUsername !== null && resUsername.consumedPoints > 0) {
-        await repositories.recourceLimiterRepository.deleteUserKeyForFailedLogin(usernameKey);
-      }
-      const token = await repositories.authenticationRepository.createAdminToken(new Admin("","","","", new Date()));
-      return {
-        token,
-        user,
-      };
-    };
-
-    const handleWrongLoginPassword = async (usernameKey: string, user: User): Promise<never> => {
-      try {
-        const promises = [];
-        if (user) {
-          promises.push(repositories.recourceLimiterRepository.consumeUserPointsForFailedLogin(usernameKey));
-        }
-        await Promise.all(promises);
-        throw new errors.Unauthorized('WRONG_PASSWORD');
-      } catch (rlRejected: any) {
-        if (rlRejected instanceof Error) {
-          throw rlRejected;
-        } else {
-          const retryAfterSecs = getRetryAfterSeconds(rlRejected.msBeforeNext);
-          throw new errors.TooManyRequests(`Too Many Requests. Retry after ${String(retryAfterSecs)} seconds`);
-        }
-      }
-    };
 
     // eslint-disable-next-line consistent-return
     async function login(email: string, password: string): Promise<Token> {
@@ -79,9 +48,14 @@ export const authServiceFactory: IAuthServiceFactory = {
         return token;
     }
 
+    async function getInfo(): Promise<Admin> {
+      return repositories.authenticationRepository.getAdminInfo();
+    }
+
     return {
       register,
       login,
+      getInfo
     };
   },
 };
