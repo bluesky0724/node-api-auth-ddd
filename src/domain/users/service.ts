@@ -1,6 +1,6 @@
 import { IRepositories } from '../../common/interfaces/IRepositories';
 import { User } from './model';
-import { ICreateUser, IGetUserQuery, IPaginatedUsers, IUpdateUser, IUpdateUserQuery } from './usersRepository';
+import { ICreateUser, IGetUserQuery, IPaginatedUsers, IUpdateUser } from './usersRepository';
 
 /*
   Here is the core of our application. Here we add our business logic.
@@ -8,13 +8,12 @@ import { ICreateUser, IGetUserQuery, IPaginatedUsers, IUpdateUser, IUpdateUserQu
   So we add this logic in domain layer.
 */
 export type GetUserQuery = IGetUserQuery;
-export type UpdateUserQuery = IUpdateUserQuery;
 
 export interface IUsersService {
   getAllUsers(pageNum: number): Promise<IPaginatedUsers>;
   getUser(query: GetUserQuery): Promise<{ user: User; }>;
   createUser(createUserDto: ICreateUser): Promise<User>;
-  updateUser(query: UpdateUserQuery, updateUserDto: IUpdateUser): Promise<User>;
+  updateUser(userId: string, updateUserDto: IUpdateUser): Promise<User>;
   deleteUser(userId: string): Promise<any>;
 }
 
@@ -46,8 +45,8 @@ export const usersServiceFactory: IUsersServiceFactory = {
       return repositories.usersRepository.createUser(createUserDto);
     }
 
-    async function updateUser(query: UpdateUserQuery, updateUerDto: IUpdateUser) {
-      return repositories.usersRepository.updateUser(query, updateUerDto);
+    async function updateUser(userId: string, updateUerDto: IUpdateUser) {
+      return repositories.usersRepository.updateUser(userId, updateUerDto);
     }
 
     async function deleteUser(userId: string) {

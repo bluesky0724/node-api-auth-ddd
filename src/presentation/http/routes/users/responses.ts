@@ -1,3 +1,5 @@
+import { IPagination } from "../../../../common/interfaces/IPagination";
+
 /**
   * This is the user response.
   * Added in order to avoid return password as response.
@@ -20,3 +22,7 @@ export class UserResponse {
   }
 }
 
+export interface IUsersResponse {
+  pagination: IPagination;
+  data: UserResponse[];
+}

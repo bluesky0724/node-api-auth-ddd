@@ -5,7 +5,7 @@ import {
   validateCreateUserBody,
 } from '../../middleware/endpointValidator';
 import { asyncWrapper } from '../../utils/asyncWrapper';
-import { GetUserQuery, UpdateUserQuery } from '../../../../domain/users/service';
+import { GetUserQuery } from '../../../../domain/users/service';
 import { IServices } from '../../../../common/interfaces/IServices';
 import { IExpressRequest } from '../../../../common/interfaces/IExpressRequest';
 
@@ -21,9 +21,11 @@ export const usersRouter: IUsersRouter = {
       '/all',
       validate,
       asyncWrapper(async (req: IExpressRequest, res: Response) => {
-        const result = await services.usersService.getAllUsers(req.body.pageNum);
+        let result = await services.usersService.getAllUsers(req.body.pageNum);
+
         return res.send({
-          data: result,
+          pagination: result.pagination,
+          data: result.data.map(user => user.toUserResponse()),
         });
       }),
     );
@@ -66,9 +68,7 @@ export const usersRouter: IUsersRouter = {
       validateCreateUserBody(),
       validate,
       asyncWrapper(async (req: IExpressRequest, res: Response) => {
-        const user = await services.usersService.updateUser({
-          userId: req.params.userId,
-        } as UpdateUserQuery, {
+        const user = await services.usersService.updateUser(req.params.userId, {
           username: req.body.username,
           email: req.body.email,
           password: req.body.password,

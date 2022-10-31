@@ -41,7 +41,7 @@ export const authenticationRepositoryFactory: IAuthenticationRepositoryFactory =
 
     async function registerAdmin(registerAdminDto: IRegisterAdminDto): Promise<Admin> {
       let oldAdmin = await AdminDao.findOne({});
-      if (oldAdmin) new errors.Conlict("Admin already exists");
+      if (oldAdmin) new errors.Conflict("Admin already exists");
       let adminModel = new AdminDao(registerAdminDto);
       adminModel = await adminModel.save();
       return adminModel.toAdmin();

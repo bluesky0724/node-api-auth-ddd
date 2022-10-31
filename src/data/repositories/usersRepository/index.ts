@@ -2,7 +2,7 @@ import { FilterQuery, PaginateResult } from 'mongoose';
 import errors from '../../../common/errors';
 import { IUserEntity, UserDao } from '../../infrastructure/db/schemas/User';
 import { User } from '../../../domain/users/model';
-import { IUsersRepository, IGetUserQuery, ICreateUser, IUpdateUserQuery, IUpdateUser, IPaginatedUsers } from '../../../domain/users/usersRepository';
+import { IUsersRepository, IGetUserQuery, ICreateUser, IUpdateUser, IPaginatedUsers } from '../../../domain/users/usersRepository';
 
 interface IUsersRepositoryFactory {
   init(): IUsersRepository;
@@ -69,8 +69,8 @@ const userStore: IUsersRepository = {
     userModel = await userModel.save();
     return userModel.toUser();
   },
-  async updateUser(query: IUpdateUserQuery, updateUserDto: IUpdateUser): Promise<User> {
-    let newUser = await UserDao.findOneAndUpdate(query, updateUserDto);
+  async updateUser(userId: string, updateUserDto: IUpdateUser): Promise<User> {
+    let newUser = await UserDao.findByIdAndUpdate(userId, updateUserDto);
     if (!newUser) {
       throw new errors.NotFound('User not found.');
     }
@@ -79,7 +79,11 @@ const userStore: IUsersRepository = {
 
   async deleteUser(userId: string): Promise<any> {
     let result = await UserDao.findOneAndRemove({ id: userId });
-    return result;
+    if (!result) throw new errors.NotFound('User not found.');
+    return {
+      status: 'Success',
+      message: "Successfully deleted"
+    };
   }
 };
 
