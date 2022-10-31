@@ -11,16 +11,6 @@
     "dev": "npx ts-node src/server.ts",
     "test": "mocha tests --recursive --timeout 15000 --exit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eldimious/nodejs-api-showcase.git"
-  },
-  "author": "Dimos Botsaris <botsaris.d@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/eldimious/nodejs-api-showcase/issues"
-  },
-  "homepage": "https://github.com/eldimious/nodejs-api-showcase#readme",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",

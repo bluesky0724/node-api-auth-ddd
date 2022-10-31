@@ -20,8 +20,8 @@ export default {
             description: 'User management endpoint for single admin',
         },
         {
-            name: 'Auth',
-            description: 'Endpoints for register/login',
+            name: 'Admin',
+            description: `Endpoints for admin's register/login`,
         },
     ],
     schemes: [
@@ -51,19 +51,14 @@ export default {
         },
     },
     paths: {
-        '/auth/register/': paths.auth.register,
-        '/auth/login': paths.auth.login,
-        '/users': paths.users['get-all-user'],
+        '/admin/register/': paths.auth.register,
+        '/admin/login': paths.auth.login,
+        '/admin/update': paths.auth.update,
+        '/admin/delete': paths.auth.delete,
+        '/admin/info': paths.auth.getInfo,
+        '/users/all': paths.users['get-all-user'],
+        '/users/': paths.users['create-user'],
         '/users/{userId}': paths.users['get-user'],
     },
     components,
-    definitions: {
-        Pagination: definitions.Pagination,
-        Token: definitions.Token,
-        User: definitions.User,
-        401: definitions.Errors[401],
-        400: definitions.Errors[400],
-        404: definitions.Errors[404],
-        500: definitions.Errors[500],
-    },
 };

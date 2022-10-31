@@ -6,18 +6,9 @@ const Errors = {
                 type: 'integer',
                 default: 401,
             },
-            data: {
-                type: 'object',
-                properties: {
-                    code: {
-                        type: 'integer',
-                        default: 401,
-                    },
-                    message: {
-                        type: 'string',
-                        default: 'Invalid user token',
-                    },
-                },
+            message: {
+                type: 'string',
+                default: 'Invalid user token',
             },
         },
     },
@@ -28,18 +19,9 @@ const Errors = {
                 type: 'integer',
                 default: 404,
             },
-            data: {
-                type: 'object',
-                properties: {
-                    code: {
-                        type: 'integer',
-                        default: 404,
-                    },
-                    message: {
-                        type: 'string',
-                        default: 'The resource was not found',
-                    },
-                },
+            message: {
+                type: 'string',
+                default: 'Invalid user token',
             },
         },
     },
@@ -50,18 +32,9 @@ const Errors = {
                 type: 'integer',
                 default: 400,
             },
-            data: {
-                type: 'object',
-                properties: {
-                    code: {
-                        type: 'integer',
-                        default: 400,
-                    },
-                    message: {
-                        type: 'string',
-                        default: 'Bad request',
-                    },
-                },
+            message: {
+                type: 'string',
+                default: 'Invalid user token',
             },
         },
     },
@@ -72,18 +45,9 @@ const Errors = {
                 type: 'integer',
                 default: 500,
             },
-            data: {
-                type: 'object',
-                properties: {
-                    code: {
-                        type: 'integer',
-                        default: 500,
-                    },
-                    message: {
-                        type: 'string',
-                        default: 'Internal Server Error',
-                    },
-                },
+            message: {
+                type: 'string',
+                default: 'Invalid user token',
             },
         },
     },

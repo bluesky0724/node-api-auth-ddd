@@ -138,7 +138,7 @@ for running tests.
 
 # Endpoints #
 
-## Auth Routes ##
+## Admin Routes ##
   
 ### Register ###
 
@@ -157,7 +157,7 @@ Body Params:
 }
 ```
 
-**Description**: creates a new user. Password is stored in bcrypt format.
+**Description**: creates a new admin. Password is stored in bcrypt format.
 
 
 ### Login ###
@@ -174,7 +174,7 @@ Body Params:
 }
 ```
 
-**Description**: logs in to the server. Server will return a JWT token and user's info as:
+**Description**: logs in to the server. Server will return a JWT token:
 
 ```js
 {
@@ -187,6 +187,46 @@ Body Params:
     }
 }
 ```
+
+
+### Update ###
+
+```shell
+PUT /admin/update
+```
+
+Body Params:
+```shell
+{ 
+  fullname,
+  email,
+  password
+}
+```
+
+**Description**: Update admin info:
+
+```js
+{
+    "status": "success",
+    "data": {
+          "id": "635f00db957b63a0db223a67",
+          "username": "group.user9",
+          "email": "grop.user9@gmail.com",
+          "created": "2022-10-30T22:55:23.507Z"
+    }
+}
+```
+
+
+### Delete ###
+
+```shell
+DELETE /admin/
+```
+
+**Description**: Delete admin :
+
 
 ## User Routes ##
 

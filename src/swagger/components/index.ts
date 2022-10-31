@@ -18,6 +18,12 @@ const components = {
                 $ref: '#/definitions/404',
             },
         },
+        406: {
+            description: 'Admin registration conflict. Admin already exists',
+            schema: {
+                $ref: '#/definitions/406',
+            },
+        },
         500: {
             description: 'Internal Server Error',
             schema: {

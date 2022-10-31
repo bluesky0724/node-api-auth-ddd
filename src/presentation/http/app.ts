@@ -24,7 +24,9 @@ const app = express();
 const privateKey = fs.readFileSync('src/configuration/private.pem', 'utf-8');
 
 app.disable('x-powered-by');
-app.use(helmet());
+app.use(helmet({
+  xssFilter: true,
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(compress);

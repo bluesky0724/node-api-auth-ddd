@@ -1,10 +1,6 @@
-// Todo: Modify
+
 export default {
     version: '1.0.0',
-    title: 'NodeJS API for nodejs-api-showcase project',
-    description: 'NodeJS API for nodejs-api-showcase project',
-    license: {
-        name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT',
-    },
+    title: 'NodeJS API for admin authentication and user management.',
+    description: 'Implement CRUD operation for admin authentication and user management based on MVC/DDD/Hexagon structure',
 };

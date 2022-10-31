@@ -1,6 +1,6 @@
 export default {
-    register: {
-        post: {
+    getInfo: {
+        get: {
             tags: [
                 'Admin',
             ],
@@ -8,6 +8,43 @@ export default {
                 {
                     Bearer: [],
                 },
+            ],
+            description: 'Get admin data using JWT token',
+            responses: {
+                200: {
+                    description: 'Admin data',
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            data: {
+                                type: 'object',
+                                $ref: '#/definitions/User',
+                            },
+                        },
+                    },
+                },
+                400: {
+                    $ref: '#/components/responses/400',
+                },
+                401: {
+                    $ref: '#/components/responses/401',
+                },
+                404: {
+                    $ref: '#/components/responses/404',
+                },
+                406: {
+                    $ref: '#/components/responses/404',
+                },
+                500: {
+                    $ref: '#/components/responses/500',
+                },
+            },
+        }
+    },
+    register: {
+        post: {
+            tags: [
+                'Admin',
             ],
             description: 'Add a new admin in DB if no admin exist. Otherwise, returns conflict error.',
             parameters: [
@@ -40,8 +77,74 @@ export default {
                 'application/json',
             ],
             responses: {
-                200: {
+                201: {
                     description: 'New user registered',
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            data: {
+                                type: 'object',
+                                $ref: '#/definitions/User',
+                            },
+                        },
+                    },
+                },
+                400: {
+                    $ref: '#/components/responses/400',
+                },
+                401: {
+                    $ref: '#/components/responses/401',
+                },
+                404: {
+                    $ref: '#/components/responses/404',
+                },
+                406: {
+                    $ref: '#/components/responses/404',
+                },
+                500: {
+                    $ref: '#/components/responses/500',
+                },
+            },
+        },
+    },
+    update: {
+        put: {
+            tags: [
+                'Admin',
+            ],
+            security: [
+                {
+                    Bearer: [],
+                },
+            ],
+            description: 'Update current admin if holds JWT token',
+            parameters: [
+                {
+                    name: 'body',
+                    in: 'body',
+                    description: 'Body for updating new admin',
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            fullname: {
+                                type: 'string',
+                            },
+                            email: {
+                                type: 'string',
+                            },
+                            password: {
+                                type: 'string',
+                            },
+                        },
+                    },
+                },
+            ],
+            produces: [
+                'application/json',
+            ],
+            responses: {
+                200: {
+                    description: 'Admin updated',
                     schema: {
                         type: 'object',
                         properties: {
@@ -70,14 +173,9 @@ export default {
     login: {
         post: {
             tags: [
-                'Auth',
+                'Admin',
             ],
-            security: [
-                {
-                    Bearer: [],
-                },
-            ],
-            description: 'Login user in dashboard.',
+            description: 'Login admin in dashboard.',
             parameters: [
                 {
                     name: 'body',
@@ -112,18 +210,48 @@ export default {
 
                             data: {
                                 type: 'object',
-                                properties: {
-                                    user: {
-                                        type: 'object',
-                                        $ref: '#/definitions/User',
-                                    },
-                                    token: {
-                                        type: 'object',
-                                        $ref: '#/definitions/Token',
-                                    },
-
-                                },
+                                $ref: '#/definitions/Token',
                             },
+                        },
+                    },
+                },
+                400: {
+                    $ref: '#/components/responses/400',
+                },
+                401: {
+                    $ref: '#/components/responses/401',
+                },
+                404: {
+                    $ref: '#/components/responses/404',
+                },
+                500: {
+                    $ref: '#/components/responses/500',
+                },
+            },
+        },
+    },
+    delete: {
+        delete: {
+            tags: [
+                'Admin',
+            ],
+            security: [
+                {
+                    Bearer: [],
+                },
+            ],
+            description: 'Delete admin',
+            produces: [
+                'application/json',
+            ],
+            responses: {
+                200: {
+                    description: 'User logins',
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            status: 'success',
+                            message: 'successfully deleted',
                         },
                     },
                 },

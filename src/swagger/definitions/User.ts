@@ -4,12 +4,6 @@ export default {
         _id: {
             type: 'string',
         },
-        name: {
-            type: 'string',
-        },
-        surname: {
-            type: 'string',
-        },
         username: {
             type: 'string',
         },

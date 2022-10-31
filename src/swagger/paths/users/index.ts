@@ -24,6 +24,10 @@ export default {
                                     $ref: '#/definitions/User',
                                 }
                             },
+                            pagination: {
+                                type: 'object',
+                                $ref: '#/definitions/Pagination'
+                            }
                         },
                     },
                 },
@@ -41,6 +45,8 @@ export default {
                 },
             },
         },
+    },
+    'create-user': {
         post: {
             parameters: [
                 {
@@ -50,23 +56,15 @@ export default {
                     schema: {
                         type: 'object',
                         required: [
+                            'username',
                             'email',
                             'password',
-                            'name',
-                            'surname',
-                            'username',
                         ],
                         properties: {
                             email: {
                                 type: 'string',
                             },
                             username: {
-                                type: 'string',
-                            },
-                            name: {
-                                type: 'string',
-                            },
-                            surname: {
                                 type: 'string',
                             },
                             password: {
@@ -87,7 +85,7 @@ export default {
             ],
             summary: 'Create User',
             responses: {
-                200: {
+                201: {
                     description: 'User is created in db',
                     schema: {
                         type: 'object',
@@ -232,10 +230,8 @@ export default {
                     schema: {
                         type: 'object',
                         properties: {
-                            data: {
-                                type: 'object',
-                                $ref: '#/definitions/User',
-                            },
+                            status: 'success',
+                            message: 'successfully deleted'
                         },
                     },
                 },
@@ -253,8 +249,5 @@ export default {
                 },
             },
         },
-    },
-    'create-user': {
-
     },
 };
