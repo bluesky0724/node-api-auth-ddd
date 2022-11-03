@@ -1,6 +1,26 @@
 
-# What is this repository for? #
-Node.js app architecture showcase using [Express](https://www.npmjs.com/package/express), [MongoDB](https://www.mongodb.com/) and [Mongoose](http://mongoosejs.com/) as ORM. The project has an  implementation of an authentication system that uses JSON Web Token to manage users' login data in Node.js web server. You can start your Node.js projects building on this boilerplate.
+# What is this project for? #
+This project which applies MVC/DDD/Hexagonal structure is using [Express](https://www.npmjs.com/package/express), [MongoDB](https://www.mongodb.com/) and [Mongoose](http://mongoosejs.com/) as ORM. The project has an  implementation of an authentication system that uses JSON Web Token to manage admin' login data in Node.js web server and user management by admin.
+
+## Contents ##
+1. [Architecture Overview](#architecture-overview)
+  1.1 [Data Layer](#data-layer)
+  1.2 [Domain Layer](#domain-layer)
+  1.3 [Routs/Controller Layer](#routescontroller-layer)
+2. [Security Concern](#security-concern)
+  2.1 [JWT signing and verification](#jwt-signing-and-verification)
+  2.2 [Password Hashing](#password-hashing)
+  2.3 [Username and Email Encryption](#username-and-email-encryption)
+3. [Quick Start](#quick-start)
+  3.1 [Prerequisites](#prerequisites)
+  3.2 [Use Docker](#use-docker)
+  3.3 [Use the npm scripts](#use-the-npm-scripts)
+4. [Endpoints](#endpoints)
+  4.1 [Admin Routes](#admin-routes)
+  4.2 [User Routs](#user-routes)
+5. [Swagger Docs](#swagger-docs)
+
+6. [Pakages and Tools](#packages-and-tools)
 
 # Architecture Overview #
 The app is designed to use a layered architecture. The architecture is heavily influenced by the Clean Architecture.[Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html) is an architecture where:
@@ -145,7 +165,7 @@ for running tests.
 Register Admin if no admin exists
 
 ```shell
-POST /auth/register
+POST /admin/register
 ```
 
 Body Params:
@@ -163,7 +183,7 @@ Body Params:
 ### Login ###
 
 ```shell
-POST /auth/login
+POST /admin/login
 ```
 
 Body Params:
@@ -316,6 +336,10 @@ Delete /users/:userId
 ```
 
 **Description**: Updatae a specific user with Admin's credential.
+
+## Swagger Docs ##
+
+Please visit http://localhost:8080/docs for more details about endpoints.
 
 # Packages and Tools #
 

@@ -1,4 +1,4 @@
-import process from 'process';
+import process from "process";
 
 const init = (closeFunc: () => any) => async () => {
   try {
